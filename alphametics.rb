@@ -1,4 +1,3 @@
-require 'pry'
 class Alphametics
   def self.solve(str)
     self.new(str).run
@@ -20,42 +19,17 @@ class Alphametics
     end
     return {}
   end
-  # def run
-  #   puts "**START**"
-  #   current_guess = random_guess
-  #   puts "GUESS = #{current_guess}"
-  #   if try(current_guess)
-  #     puts "HOLY CRAP!"
-  #     return result
-  #   else
-  #     puts "hahaha nope"
-  #     return {}
-  #   end
-  #   # letters.each do |letter|
-  #   #   result[letter] = @digits.sample(3)
-  #   # end
-  #   puts "**END**"
-  # end
-  # def try(current_guess)
-  #   if check_math(current_guess)
-  #     result = current_guess
-  #     return true
-  #   end
-  #   try(random_guess)
-  # end
-  # def random_guess
-  #   letters = @equation_string.scan(/[A-Z]/).uniq # unique letters
-  #   # usable_digits = @digits.sample(letters.length) # pull unique as many numbers as there are letters
-  #   Hash[letters.zip(usable_digits)] # make it a hash
-  # end
   def check_math(current_guess)
-    sides = @equation_string.split("==")
-    left_str = sides[0].strip
-    right_str = sides[1].strip
-    addends = left_str.split("+").map(&:strip).map { |letter| current_guess[letter]}
-    binding.pry
-    left = addends.reduce(&:+)
-    right = current_guess[right_str]
-    left == right
+    translated_equation = @equation_string.gsub(/[A-Z]/, current_guess)
+    return false unless valid_numbers?(translated_equation)
+    sides = translated_equation.split("==")
+    eval(sides[0]) == sides[1].to_i
   end
+  
+  def valid_numbers?(translated_equation)
+    translated_equation.scan(/\d+/).each do |number|
+      return false if number.to_i.to_s != number
+    end
+  end
+
 end
